@@ -28,14 +28,19 @@ public class RealEstate {
         } else {
             System.out.println("do you want properties for rent or sale? enter 1 for sale, 0 for rent and -999 for 'it doesn't matter'");
             int answerIsForRent = scanner.nextInt();
+            scanner.nextLine();
             System.out.println("what is the wanted house category? enter 1 for regular apartment, enter 2 for penthouse apartment, enter 3 for private house and -999 for 'it doesn't matter'");
             int answerHouseCategory = scanner.nextInt();
+            scanner.nextLine();
             System.out.println("what is the wanted number of rooms? if it doesn't matter enter -999");
             int answerWantedNumberOfRooms = scanner.nextInt();
+            scanner.nextLine();
             System.out.println("what is the maximum price you want? enter -999 for 'it doesn't matter' ");
             int answerMaxPrice = scanner.nextInt();
+            scanner.nextLine();
             System.out.println("what is the minimum price you want? enter -999 for 'it doesn't matter' ");
             int answerMinPrice = scanner.nextInt();
+            scanner.nextLine();
             Property[] temp = new Property[properties.length];
             int howManyRelevantProperties = 0;
             boolean answerBooleanIsForRent = true;
@@ -67,7 +72,7 @@ public class RealEstate {
                 System.out.println(userProperties[i]);
                 System.out.println(" ");
             }
-            if(userProperties.length==0){
+            if (userProperties.length == 0) {
                 System.out.println("you haven't posted anything yet...");
             }
         } else {
@@ -99,6 +104,7 @@ public class RealEstate {
             }
             System.out.println("type in  a number according to the listed number of the post you would like to remove from the list above");
             int propertyToRemoveIndex = scanner.nextInt();
+            scanner.nextLine();
             removePropertyFromList(propertiesByUser[propertyToRemoveIndex]);
             System.out.println("Post removed successfully!");
         }
@@ -191,6 +197,7 @@ public class RealEstate {
                         "2. Penthouse apartment \n" +
                         "3. Private house ");
                 int enteredHouseCategory = scanner.nextInt();
+                scanner.nextLine();
                 if (enteredHouseCategory > 3 || enteredHouseCategory < 1) {
                     didItSucceed = false;
                     return didItSucceed;
@@ -199,11 +206,14 @@ public class RealEstate {
                     if (enteredHouseCategory == 1 || enteredHouseCategory == 2) {
                         System.out.println("What is the property's floor number? ");
                         floorNumber = scanner.nextInt();
+                        scanner.nextLine();
                     }
                     System.out.println("How many rooms your property got? enter the answer below: ");
                     int howManyRooms = scanner.nextInt();
+                    scanner.nextLine();
                     System.out.println("What is your house number?");
                     int houseNumber = scanner.nextInt();
+                    scanner.nextLine();
                     boolean isForSale = false;
                     System.out.println("is the property for sale? if yes enter '1' (without the quotation mark), if the property is for rent enter anything else.");
                     String userAnswer = scanner.nextLine();
@@ -212,6 +222,7 @@ public class RealEstate {
                     }
                     System.out.println("how much would you take for the property? (if it is for rental enter monthly rental fee) please enter the answer in numbers below:  ");
                     int price = scanner.nextInt();
+                    scanner.nextLine();
                     Address userEnteredAddress = new Address(enteredCity, enteredStreet);
                     Property newProperty = new Property(userEnteredAddress, howManyRooms, price, enteredHouseCategory, !isForSale, houseNumber, floorNumber, user);
                     addProperty(newProperty);
@@ -284,7 +295,7 @@ public class RealEstate {
             newArray = new Property[1];
             newArray[0] = propertyToAdd;
         } else {
-            newArray = new Property[properties.length+1];
+            newArray = new Property[properties.length + 1];
             for (int i = 0; i < properties.length; i++) {
                 newArray[i] = properties[i];
             }
@@ -414,6 +425,7 @@ public class RealEstate {
                     "3.Close the program. ");
 
             int userChoice = scanner.nextInt();
+            scanner.nextLine();
             switch (userChoice) {
                 case 1: {
                     realEstate.createUser();
@@ -437,6 +449,7 @@ public class RealEstate {
                                     "5. Search property by parameters \n" +
                                     "6. Logout and exist to main menu");
                             chosenOption = scanner.nextInt();
+                            scanner.nextLine();
                             switch (chosenOption) {
                                 case 1: {
                                     boolean didItSucceed = realEstate.postNewProperty(user);
