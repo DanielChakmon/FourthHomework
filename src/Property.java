@@ -101,7 +101,7 @@ public class Property {
                 break;
             }
             case 3:{
-                houseCategoryTextPrint="Privet house";
+                houseCategoryTextPrint = "Private house";
             }
             }
 String textAboutFloor=new String();
