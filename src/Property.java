@@ -85,7 +85,7 @@ public class Property {
 
     public String toString() {
         String rentalOrSaleStatus;
-        if (isForRental()) {
+        if (forRental) {
             rentalOrSaleStatus = "-for rent";
         } else {
             rentalOrSaleStatus = "-for sale";

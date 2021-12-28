@@ -92,21 +92,92 @@ public class RealEstate {
         }
     }
 
-    public void removeProperty(User user) {
+    public static void main(String[] args) {
+        RealEstate realEstate = new RealEstate();
         Scanner scanner = new Scanner(System.in);
-        Property[] propertiesByUser = getPropertiesByUser(user);
-        if (propertiesByUser.length == 0) {
-            System.out.println("You haven't posted anything yet...");
-        } else {
-            System.out.println("you have posted this properties: ");
-            for (int i = 0; i < propertiesByUser.length; i++) {
-                System.out.println((i + 1) + " " + propertiesByUser[i]);
-            }
-            System.out.println("type in  a number according to the listed number of the post you would like to remove from the list above");
-            int propertyToRemoveIndex = scanner.nextInt();
+        boolean stopTheProgram = false;
+        while (!stopTheProgram) {
+            System.out.println("Please enter a number according to the index of the wanted action as shown below to continue: \n" +
+                    "1. Create an account. \n" +
+                    "2. Login to an exiting account. \n" +
+                    "3.Close the program. ");
+
+            int userChoice = scanner.nextInt();
             scanner.nextLine();
-            removePropertyFromList(propertiesByUser[propertyToRemoveIndex]);
-            System.out.println("Post removed successfully!");
+            switch (userChoice) {
+                case 1: {
+                    realEstate.createUser();
+                    System.out.println("Account created successfully!");
+                    break;
+                }
+                case 2: {
+                    User user = realEstate.login();
+                    if (user == null) {
+                        System.out.println("you have entered wrong username/ password... back to main menu it is then...");
+                        break;
+                    } else {
+                        boolean breakLoop = false;
+                        while (!breakLoop) {
+                            int chosenOption = 0;
+                            System.out.println("Please enter a number according to the index of the wanted action as shown below to continue: \n" +
+                                    "1. Post new property \n" +
+                                    "2. Remove posted property \n" +
+                                    "3. Show all the properties in the system \n" +
+                                    "4. Show all the properties posted by you \n" +
+                                    "5. Search property by parameters \n" +
+                                    "6. Logout and exist to main menu");
+                            chosenOption = scanner.nextInt();
+                            scanner.nextLine();
+                            switch (chosenOption) {
+                                case 1: {
+                                    boolean didItSucceed = realEstate.postNewProperty(user);
+                                    if (!didItSucceed) {
+                                        System.out.println(" you have reached the maximum amount of posts/ entered an invalid input....");
+                                        break;
+                                    } else {
+                                        System.out.println("Property posted successfully! ");
+                                        break;
+                                    }
+                                }
+                                case 2: {
+                                    realEstate.removeProperty(user);
+                                    break;
+                                }
+                                case 3: {
+                                    realEstate.printAllProperties();
+                                    break;
+                                }
+                                case 4: {
+                                    realEstate.printUserProperties(user);
+                                    break;
+                                }
+                                case 5: {
+                                    Property[] relevantProperties = realEstate.search();
+                                    if (relevantProperties != null) {
+                                        System.out.println(" ");
+                                        for (int i = 0; i < relevantProperties.length; i++) {
+                                            System.out.println(relevantProperties[i]);
+                                            System.out.println(" ");
+                                        }
+                                    } else {
+                                        System.out.println("there is no property matching to your search :(");
+                                    }
+                                    break;
+                                }
+                                case 6: {
+                                    breakLoop = true;
+                                    break;
+                                }
+                            }
+                        }
+                        break;
+                    }
+                }
+                case 3: {
+                    stopTheProgram = true;
+                    break;
+                }
+            }
         }
     }
 
@@ -126,112 +197,30 @@ public class RealEstate {
         return matchingProperties;
     }
 
-    public boolean postNewProperty(User user) {
-        boolean didItSucceed = true;
+    public void removeProperty(User user) {
         Scanner scanner = new Scanner(System.in);
         if (properties != null) {
-            if (user.isBroker()) {
-                if (getPropertiesByUser(user).length >= 10) {
-                    //System.out.println("Sorry... brokers can post ONLY up to 10 properties... you can delete existing posts in the next menu:  ");
-                    didItSucceed = false;
-                    return didItSucceed;
-                }
+            Property[] propertiesByUser = getPropertiesByUser(user);
+            if (propertiesByUser.length == 0) {
+                System.out.println("You haven't posted anything yet...");
             } else {
-                if (getPropertiesByUser(user).length >= 3) {
-                    //System.out.println("Sorry... private users can post ONLY up to 3 properties... you can delete existing posts in the next menu:  ");
-                    didItSucceed = false;
-                    return didItSucceed;
+                System.out.println(" ");
+                System.out.println("you have posted this properties: ");
+                System.out.println(" ");
+                for (int i = 0; i < propertiesByUser.length; i++) {
+                    System.out.println((i + 1) + " " + propertiesByUser[i]);
+                    System.out.println(" ");
                 }
-            }
-        }
-        boolean didThisCityAppeared = false;
-        System.out.println("shown below is the list of supported cities: ");
-        for (int i = 0; i < addresses.length; i++) {
-            didThisCityAppeared = false;
-            for (int j = 0; j < i; j++) {
-                if (addresses[i].getCityName().equals(addresses[j].getCityName())) {
-                    didThisCityAppeared = true;
-                    break;
-                }
-            }
-            if (!didThisCityAppeared) {
-                System.out.println("-" + addresses[i].getCityName());
-            }
-        }
-        System.out.println("please enter the city of your property according to the list: ");
-        String enteredCity = scanner.nextLine();
-        boolean didItMatchWithList = false;
-        for (int i = 0; i < addresses.length; i++) {
-            if (enteredCity.equals(addresses[i].getCityName())) {
-                didItMatchWithList = true;
-                break;
-            }
-        }
-        if (!didItMatchWithList) {
-            //  System.out.println("entered city not supported");
-            didItSucceed = false;
-            return didItSucceed;
-        } else {
-            System.out.println("Shown below is the list of all supported streets in " + enteredCity + ":");
-            for (int i = 0; i < addresses.length; i++) {
-                if (addresses[i].getCityName().equals(enteredCity)) {
-                    System.out.println("-" + addresses[i].getStreetName());
-                }
-            }
-            System.out.println("please enter your property's street according to the list: ");
-            String enteredStreet = scanner.nextLine();
-            didItMatchWithList = false;
-            for (int i = 0; i < addresses.length; i++) {
-                if (addresses[i].getCityName().equals(enteredCity) && addresses[i].getStreetName().equals(enteredStreet)) {
-                    didItMatchWithList = true;
-                    break;
-                }
-            }
-            if (!didItMatchWithList) {
-                // System.out.println("entered street not supported/ not from this city");
-                didItSucceed = false;
-                return didItSucceed;
-            } else {
-                System.out.println("please enter number according to the list below and your property status: \n" +
-                        "1. Regular apartment \n" +
-                        "2. Penthouse apartment \n" +
-                        "3. Private house ");
-                int enteredHouseCategory = scanner.nextInt();
+                System.out.println("type in  a number according to the listed number of the post you would like to remove from the list above");
+                int propertyToRemoveIndex = scanner.nextInt();
                 scanner.nextLine();
-                if (enteredHouseCategory > 3 || enteredHouseCategory < 1) {
-                    didItSucceed = false;
-                    return didItSucceed;
-                } else {
-                    int floorNumber = -1;
-                    if (enteredHouseCategory == 1 || enteredHouseCategory == 2) {
-                        System.out.println("What is the property's floor number? ");
-                        floorNumber = scanner.nextInt();
-                        scanner.nextLine();
-                    }
-                    System.out.println("How many rooms your property got? enter the answer below: ");
-                    int howManyRooms = scanner.nextInt();
-                    scanner.nextLine();
-                    System.out.println("What is your house number?");
-                    int houseNumber = scanner.nextInt();
-                    scanner.nextLine();
-                    boolean isForSale = false;
-                    System.out.println("is the property for sale? if yes enter '1' (without the quotation mark), if the property is for rent enter anything else.");
-                    String userAnswer = scanner.nextLine();
-                    if (userAnswer == "1") {
-                        isForSale = true;
-                    }
-                    System.out.println("how much would you take for the property? (if it is for rental enter monthly rental fee) please enter the answer in numbers below:  ");
-                    int price = scanner.nextInt();
-                    scanner.nextLine();
-                    Address userEnteredAddress = new Address(enteredCity, enteredStreet);
-                    Property newProperty = new Property(userEnteredAddress, howManyRooms, price, enteredHouseCategory, !isForSale, houseNumber, floorNumber, user);
-                    addProperty(newProperty);
-                    didItSucceed = true;
-                    return didItSucceed;
-                }
-
+                removePropertyFromList(propertiesByUser[propertyToRemoveIndex]);
+                System.out.println("Post removed successfully!");
             }
+        } else {
+            System.out.println("you haven't posted anything yet");
         }
+
     }
 
     public User login() {
@@ -360,6 +349,117 @@ public class RealEstate {
         return isItStrong;
     }
 
+    public boolean postNewProperty(User user) {
+        boolean didItSucceed = true;
+        Scanner scanner = new Scanner(System.in);
+        if (properties != null) {
+            if (user.isBroker()) {
+                if (getPropertiesByUser(user).length >= 10) {
+                    //System.out.println("Sorry... brokers can post ONLY up to 10 properties... you can delete existing posts in the next menu:  ");
+                    didItSucceed = false;
+                    return didItSucceed;
+                }
+            } else {
+                if (getPropertiesByUser(user).length >= 3) {
+                    //System.out.println("Sorry... private users can post ONLY up to 3 properties... you can delete existing posts in the next menu:  ");
+                    didItSucceed = false;
+                    return didItSucceed;
+                }
+            }
+        }
+        boolean didThisCityAppeared = false;
+        System.out.println("shown below is the list of supported cities: ");
+        for (int i = 0; i < addresses.length; i++) {
+            didThisCityAppeared = false;
+            for (int j = 0; j < i; j++) {
+                if (addresses[i].getCityName().equals(addresses[j].getCityName())) {
+                    didThisCityAppeared = true;
+                    break;
+                }
+            }
+            if (!didThisCityAppeared) {
+                System.out.println("-" + addresses[i].getCityName());
+            }
+        }
+        System.out.println("please enter the city of your property according to the list: ");
+        String enteredCity = scanner.nextLine();
+        boolean didItMatchWithList = false;
+        for (int i = 0; i < addresses.length; i++) {
+            if (enteredCity.equals(addresses[i].getCityName())) {
+                didItMatchWithList = true;
+                break;
+            }
+        }
+        if (!didItMatchWithList) {
+            //  System.out.println("entered city not supported");
+            didItSucceed = false;
+            return didItSucceed;
+        } else {
+            System.out.println("Shown below is the list of all supported streets in " + enteredCity + ":");
+            for (int i = 0; i < addresses.length; i++) {
+                if (addresses[i].getCityName().equals(enteredCity)) {
+                    System.out.println("-" + addresses[i].getStreetName());
+                }
+            }
+            System.out.println("please enter your property's street according to the list: ");
+            String enteredStreet = scanner.nextLine();
+            didItMatchWithList = false;
+            for (int i = 0; i < addresses.length; i++) {
+                if (addresses[i].getCityName().equals(enteredCity) && addresses[i].getStreetName().equals(enteredStreet)) {
+                    didItMatchWithList = true;
+                    break;
+                }
+            }
+            if (!didItMatchWithList) {
+                // System.out.println("entered street not supported/ not from this city");
+                didItSucceed = false;
+                return didItSucceed;
+            } else {
+                System.out.println("please enter number according to the list below and your property status: \n" +
+                        "1. Regular apartment \n" +
+                        "2. Penthouse apartment \n" +
+                        "3. Private house ");
+                int enteredHouseCategory = scanner.nextInt();
+                scanner.nextLine();
+                if (enteredHouseCategory > 3 || enteredHouseCategory < 1) {
+                    didItSucceed = false;
+                    return didItSucceed;
+                } else {
+                    int floorNumber = -1;
+                    if (enteredHouseCategory == 1 || enteredHouseCategory == 2) {
+                        System.out.println("What is the property's floor number? ");
+                        floorNumber = scanner.nextInt();
+                        scanner.nextLine();
+                    }
+                    System.out.println("How many rooms your property got? enter the answer below: ");
+                    int howManyRooms = scanner.nextInt();
+                    scanner.nextLine();
+                    System.out.println("What is your house number?");
+                    int houseNumber = scanner.nextInt();
+                    scanner.nextLine();
+                    boolean isForRent = false;
+                    System.out.println("is the property for rent? if yes enter '1' (without the quotation mark), if the property is for sale enter any other  whole number.");
+                    int userAnswer = scanner.nextInt();
+                    scanner.nextLine();
+                    if (userAnswer == 1) {
+                        isForRent = true;
+                    } else {
+                        isForRent = false;
+                    }
+                    System.out.println("how much would you take for the property? (if it is for rental enter monthly rental fee) please enter the answer in numbers below:  ");
+                    int price = scanner.nextInt();
+                    scanner.nextLine();
+                    Address userEnteredAddress = new Address(enteredCity, enteredStreet);
+                    Property newProperty = new Property(userEnteredAddress, howManyRooms, price, enteredHouseCategory, isForRent, houseNumber, floorNumber, user);
+                    addProperty(newProperty);
+                    didItSucceed = true;
+                    return didItSucceed;
+                }
+
+            }
+        }
+    }
+
     public void createUser() {
         boolean isItOriginal = true;
         String username = null;
@@ -404,100 +504,14 @@ public class RealEstate {
             }
         } while (!isItInFormat);
         boolean broker = false;
-        System.out.println("are you broker? if yes enter '1' (without the quotation mark), if you're not a broker enter anything else.");
-        String userAnswer = scanner.nextLine();
-        if (userAnswer == "1") {
+        System.out.println("are you broker? if yes enter '1' (without the quotation mark), if you're not a broker enter any other number");
+        int userAnswer = scanner.nextInt();
+        scanner.nextLine();
+        if (userAnswer == 1) {
             broker = true;
         }
         User newUser = new User(username, password, phoneNumber, broker);
         addUser(newUser);
 
-    }
-
-    public static void main(String[] args) {
-        RealEstate realEstate = new RealEstate();
-        Scanner scanner = new Scanner(System.in);
-        boolean stopTheProgram = false;
-        while (!stopTheProgram) {
-            System.out.println("Please enter a number according to the index of the wanted action as shown below to continue: \n" +
-                    "1. Create an account. \n" +
-                    "2. Login to an exiting account. \n" +
-                    "3.Close the program. ");
-
-            int userChoice = scanner.nextInt();
-            scanner.nextLine();
-            switch (userChoice) {
-                case 1: {
-                    realEstate.createUser();
-                    System.out.println("Account created successfully!");
-                    break;
-                }
-                case 2: {
-                    User user = realEstate.login();
-                    if (user == null) {
-                        System.out.println("you have entered wrong username/ password... back to main menu it is then...");
-                        break;
-                    } else {
-                        boolean breakLoop = false;
-                        while (!breakLoop) {
-                            int chosenOption = 0;
-                            System.out.println("Please enter a number according to the index of the wanted action as shown below to continue: \n" +
-                                    "1. Post new property \n" +
-                                    "2. Remove posted property \n" +
-                                    "3. Show all the properties in the system \n" +
-                                    "4. Show all the properties posted by you \n" +
-                                    "5. Search property by parameters \n" +
-                                    "6. Logout and exist to main menu");
-                            chosenOption = scanner.nextInt();
-                            scanner.nextLine();
-                            switch (chosenOption) {
-                                case 1: {
-                                    boolean didItSucceed = realEstate.postNewProperty(user);
-                                    if (!didItSucceed) {
-                                        System.out.println(" you have reached the maximum amount of posts/ entered an invalid input....");
-                                        break;
-                                    } else {
-                                        System.out.println("Property posted successfully! ");
-                                        break;
-                                    }
-                                }
-                                case 2: {
-                                    realEstate.removeProperty(user);
-                                    break;
-                                }
-                                case 3: {
-                                    realEstate.printAllProperties();
-                                    break;
-                                }
-                                case 4: {
-                                    realEstate.printUserProperties(user);
-                                    break;
-                                }
-                                case 5: {
-                                    Property[] relevantProperties = realEstate.search();
-                                    if (relevantProperties != null) {
-                                        System.out.println(" ");
-                                        for (int i = 0; i < relevantProperties.length; i++) {
-                                            System.out.println(relevantProperties[i]);
-                                            System.out.println(" ");
-                                        }
-                                    }
-                                    break;
-                                }
-                                case 6: {
-                                    breakLoop = true;
-                                    break;
-                                }
-                            }
-                        }
-                        break;
-                    }
-                }
-                case 3: {
-                    stopTheProgram = true;
-                    break;
-                }
-            }
-        }
     }
 }
