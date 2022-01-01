@@ -84,26 +84,29 @@ public class Property {
     }
 
     public String toString() {
+        final int REGULAR_APARTMENT_CASE = 1;
+        final int PENTHOUSE_APARTMENT_CASE = 2;
+        final int PRIVATE_HOUSE = 3;
         String rentalOrSaleStatus;
         if (forRental) {
             rentalOrSaleStatus = "-for rent";
         } else {
             rentalOrSaleStatus = "-for sale";
         }
-        String houseCategoryTextPrint=new String();
-        switch (houseCategory){
-            case 1: {
+        String houseCategoryTextPrint = new String();
+        switch (houseCategory) {
+            case REGULAR_APARTMENT_CASE: {
                 houseCategoryTextPrint = "Regular apartment ";
-            break;
-            }
-            case 2:{
-                houseCategoryTextPrint="Penthouse apartment";
                 break;
             }
-            case 3:{
+            case PENTHOUSE_APARTMENT_CASE: {
+                houseCategoryTextPrint = "Penthouse apartment";
+                break;
+            }
+            case PRIVATE_HOUSE: {
                 houseCategoryTextPrint = "Private house";
             }
-            }
+        }
 String textAboutFloor=new String();
         if(houseCategory!=3){ textAboutFloor=", floor "+ floorNumber;}
         return houseCategoryTextPrint + rentalOrSaleStatus + ": " + howManyRooms + " rooms"+ textAboutFloor+ ".\n" +
