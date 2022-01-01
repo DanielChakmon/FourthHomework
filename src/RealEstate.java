@@ -23,9 +23,7 @@ public class RealEstate {
     public Property[] search() {
         final int NUMBER_OF_CRITERIA = 5;
         Scanner scanner = new Scanner(System.in);
-        if (properties == null) {
-            System.out.println("looks like no one has posted anything yet... post something so you could use this function...");
-        } else {
+        if (properties != null) {
             System.out.println("do you want properties for rent or sale? enter 1 for sale, 0 for rent and -999 for 'it doesn't matter'");
             int answerIsForRent = scanner.nextInt();
             scanner.nextLine();

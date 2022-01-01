@@ -78,7 +78,11 @@ public class Main {
                                             System.out.println(" ");
                                         }
                                     } else {
-                                        System.out.println("there is no property matching to your search :(");
+                                        if (realEstate.properties == null) {
+                                            System.out.println("looks like no one has posted anything yet... post something so you could use this function...");
+                                        } else {
+                                            System.out.println("there is no property matching to your search :(");
+                                        }
                                     }
                                     break;
                                 }
